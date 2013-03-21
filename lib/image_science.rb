@@ -301,5 +301,31 @@ class ImageScience
         return Qnil;
       }
     END
+    
+    builder.c <<-"END"
+      VALUE save_with_compression(char * output, int * ratio) {
+        int flags;
+        FIBITMAP *bitmap;
+        FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(output);
+        if (fif == FIF_UNKNOWN) fif = FIX2INT(rb_iv_get(self, "@file_type"));
+        if ((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsWriting(fif)) {
+          BOOL result = 0, unload = 0;
+          GET_BITMAP(bitmap);
+          flags = fif == FIF_JPEG ? ratio : 0;
+
+          if (fif == FIF_PNG) FreeImage_DestroyICCProfile(bitmap);
+          if (fif == FIF_JPEG && FreeImage_GetBPP(bitmap) != 24)
+            bitmap = FreeImage_ConvertTo24Bits(bitmap), unload = 1; // sue me
+
+          result = FreeImage_Save(fif, bitmap, output, flags);
+
+          if (unload) FreeImage_Unload(bitmap);
+
+          return result ? Qtrue : Qfalse;
+        }
+        rb_raise(rb_eTypeError, "Unknown file format");
+        return Qnil;
+      }
+    END
   end
 end
