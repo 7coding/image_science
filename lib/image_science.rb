@@ -45,7 +45,7 @@ class ImageScience
   # convert the file type to the appropriate format.
   #
   # :method: save
-  def save_with_compression(path, ratio); end
+  def save_with_compression(output, ratio); end
 
   ##
   # Resizes the image to +width+ and +height+ using a cubic-bspline
