@@ -303,7 +303,7 @@ class ImageScience
     END
     
     builder.c <<-"END"
-      VALUE save_with_compression(char * output, int * ratio) {
+      VALUE save_with_compression(char * output, int ratio) {
         int flags;
         FIBITMAP *bitmap;
         FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(output);
